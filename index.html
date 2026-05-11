@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="건강다이어리" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#fff7f3" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="manifest" href="manifest.json" />
+<title>혜인 건강 다이어리</title>
+<style>
+:root{
+  --bg:#fff7f3;--bg2:#f8eee8;--card:#fff;--ink:#3d2f28;--muted:#a88b80;--line:#eedbd3;
+  --accent:#ff7676;--accent2:#ffb6aa;--brown:#7a5548;--green:#6fa875;--red:#dc6868;--blue:#73a1d8;
+  --shadow:0 8px 30px rgba(122,85,72,.10);--font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);overflow:hidden}
+body{font-family:var(--font);color:var(--ink)}
+.app{max-width:430px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#fffaf7,#fff3ee)}
+.header{padding:max(env(safe-area-inset-top),18px) 20px 14px;border-bottom:1px solid var(--line);background:rgba(255,247,243,.95);backdrop-filter:blur(16px);z-index:3}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#e8bdb0;font-weight:800;text-transform:uppercase}
+.title{font-size:21px;font-weight:900;letter-spacing:-.8px;margin-top:3px}
+.date-pill{font-size:12px;font-weight:900;color:#fff;background:#d8a98e;padding:8px 13px;border-radius:999px}
+.content{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 112px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:rgba(255,247,243,.96);backdrop-filter:blur(20px);border-top:1px solid var(--line);padding:8px 0 max(env(safe-area-inset-bottom),12px);z-index:20}
+.nav button{flex:1;border:0;background:transparent;font-family:var(--font);display:flex;flex-direction:column;gap:3px;align-items:center;color:var(--muted);font-size:9px;font-weight:700}
+.nav .ico{font-size:21px;line-height:1}.nav button.active{color:#d89a78}.dot{width:5px;height:5px;border-radius:50%;background:#d89a78;display:none}.nav button.active .dot{display:block}
+.panel{display:none}.panel.active{display:block;animation:fade .14s ease}@keyframes fade{from{opacity:.45;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:17px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-title{display:flex;align-items:center;gap:10px;margin-bottom:18px}.section-title h2{font-size:22px;font-weight:900;letter-spacing:-.8px}
+.label{font-size:11px;color:var(--muted);font-weight:900;margin:13px 0 7px}
+input,textarea,select{width:100%;border:1.5px solid var(--line);border-radius:15px;background:#fffaf8;padding:13px 14px;font-size:16px;font-family:var(--font);color:var(--ink);outline:none}
+textarea{min-height:76px;font-size:14px;line-height:1.65;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{border:0;border-radius:16px;padding:14px;font-size:15px;font-weight:900;font-family:var(--font);width:100%;margin-top:12px}
+.btn-main{background:linear-gradient(135deg,#ff7676,#ff9b89);color:#fff}.btn-light{background:#fff;border:1px solid var(--line);color:var(--brown)}.btn-danger{background:#fff0ef;border:1px solid #f4c7c7;color:#c05b5b}
+.tiny{font-size:11px;color:var(--muted);line-height:1.45}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);min-height:105px}.stat .sico{font-size:24px;margin-bottom:9px}.stat .val{font-weight:900;font-size:17px}.stat .lab{font-size:11px;color:var(--muted);font-weight:700;margin-top:3px}
+.ring-wrap{text-align:center;margin:2px 0 22px;position:relative;display:flex;justify-content:center}.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}.ring-num{font-size:32px;font-weight:950}.ring-sub{font-size:11px;color:#e8cfc5;font-weight:800}
+.pill-row{display:flex;flex-wrap:wrap;gap:7px}.pill{border:1.5px solid var(--line);background:#fffaf8;color:#8b6f63;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900}.pill.active{border-color:var(--accent);background:#fff0ef;color:#e35c5c}
+.mood-row{display:flex;gap:7px;justify-content:center}.mood-btn{min-width:52px;border:1.5px solid var(--line);border-radius:15px;background:#fffaf8;padding:9px 5px;font-family:var(--font);display:flex;flex-direction:column;gap:4px;align-items:center}.mood-btn.active{border-color:var(--accent);background:#fff0ef}.mood-btn span:first-child{font-size:22px}.mood-btn span:last-child{font-size:9px;color:var(--muted);font-weight:800}
+.alert{padding:13px 15px;border-radius:17px;font-size:12px;line-height:1.5;margin:10px 0 14px;background:#fff9e9;color:#715633;border:1px solid #f1dfb8;font-weight:700}.ok{background:#eff9f1;color:#3f7048;border-color:#cfe9d3}
+.meal-photo-row{display:grid;grid-template-columns:86px 1fr;gap:11px;align-items:center;margin-top:8px}
+.photo-box{width:86px;height:86px;border-radius:16px;background:#fff7f3;border:1.5px dashed #efcfc5;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;color:#c98c7e;font-size:13px;text-align:center;font-weight:800}
+.photo-box img{width:100%;height:100%;object-fit:cover}.photo-del{position:absolute;right:5px;top:5px;background:rgba(0,0,0,.45);color:#fff;border:0;border-radius:999px;width:22px;height:22px;font-size:14px;line-height:22px}
+.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.photo-btn{border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px;font-size:12px;font-weight:900;color:var(--brown);font-family:var(--font)}
+.hidden-file{display:none}
+.photo-preview-list{display:flex;gap:6px;margin-top:8px;overflow-x:auto}.thumb{width:54px;height:54px;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
+.record-row{display:grid;grid-template-columns:70px 1fr;gap:10px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:10px;box-shadow:var(--shadow)}
+.day{font-weight:900;font-size:12px;color:#785d52}.meta{font-size:12px;color:#9a7a6f;line-height:1.55}.chip{display:inline-block;padding:4px 9px;border-radius:999px;background:#f5eee9;font-size:10px;font-weight:900;color:#7e6257;margin:2px}
+.actions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}.smallbtn{border:1px solid var(--line);background:#fff8f4;border-radius:11px;padding:8px 11px;color:#7e6257;font-size:11px;font-weight:900}.smallbtn.del{background:#fff0ef;color:#c05b5b;border-color:#f2c9c9}
+.chart-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);margin-bottom:14px}.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.chart-head strong{font-size:13px}.chart-head span{font-size:10px;color:var(--muted);font-weight:800}.range{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.range button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px;font-weight:900;color:var(--muted)}.range button.active{background:#ff8b80;color:#fff;border-color:#ff8b80}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+  <div class="header-row">
+    <div><div class="eyebrow">Health Diary</div><div class="title">혜인 건강 다이어리 🌿</div></div>
+    <div class="date-pill" id="headerDate"></div>
+  </div>
+</header>
+<main class="content">
+  <section class="panel active" id="tab-home">
+    <div class="ring-wrap">
+      <svg width="130" height="130"><circle cx="65" cy="65" r="54" fill="none" stroke="#f0e4dc" stroke-width="9"/><circle cx="65" cy="65" r="54" fill="none" stroke="#ff8b80" stroke-width="9" id="ringArc" stroke-dasharray="0 339" stroke-linecap="round" transform="rotate(-90 65 65)"/></svg>
+      <div class="ring-center"><div class="ring-num" id="ringNum">0</div><div class="ring-sub">/ 8 완료</div></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><div class="sico">⚖️</div><div class="val" id="homeWeight">—</div><div class="lab">몸무게</div></div>
+      <div class="stat"><div class="sico">🩺</div><div class="val" id="homeBP">—</div><div class="lab">혈압</div></div>
+      <div class="stat"><div class="sico">🔥</div><div class="val" id="homeInflam">—</div><div class="lab">염증/통증</div></div>
+      <div class="stat"><div class="sico">🍩</div><div class="val" id="homeBinge">—</div><div class="lab">폭식충동</div></div>
+    </div>
+    <div id="homeComment" class="alert ok">기록은 완벽보다 꾸준함이 장땡. 오늘 하나만 저장해도 이김 😎</div>
+    <div class="section-title"><span>🖼️</span><h2>최근 식단 사진</h2></div>
+    <div class="card"><div class="photo-preview-list" id="homePhotos"></div><div class="tiny" id="homePhotosEmpty">아직 사진이 없어. 식단 탭에서 올려봐 📸</div></div>
+  </section>
+
+  <section class="panel" id="tab-record">
+    <div class="section-title"><span>✍️</span><h2>오늘 기록</h2></div>
+    <div class="card">
+      <div class="grid2"><div><div class="label">날짜</div><input type="date" id="dateInput"></div><div><div class="label">몸무게 kg</div><input type="number" id="weightInput" step="0.1" placeholder="예: 72.5"></div></div>
+      <div class="grid3"><div><div class="label">수축기</div><input type="number" id="sysInput" placeholder="120"></div><div><div class="label">이완기</div><input type="number" id="diaInput" placeholder="80"></div><div><div class="label">맥박</div><input type="number" id="pulseInput" placeholder="76"></div></div>
+      <div class="grid2"><div><div class="label">수면시간</div><input type="number" id="sleepInput" step="0.5" placeholder="7"></div><div><div class="label">물 섭취(잔)</div><input type="number" id="waterInput" placeholder="8"></div></div>
+      <div class="label">기분</div><div class="mood-row" id="moodRow"></div>
+      <div class="label">폭식 충동</div><div class="pill-row" id="bingeRow"></div>
+      <div class="label">염증/통증 느낌</div><div class="pill-row" id="inflammationRow"></div>
+      <div class="label">오늘 증상 체크</div><div class="pill-row" id="symptomRow"></div>
+      <div class="label">식단 메모</div><textarea id="mealMemo" placeholder="오늘 전체 식단 흐름, 배고픔, 후회/만족, 국물/짠 음식 여부 등"></textarea>
+      <div class="label">건강 메모</div><textarea id="healthMemo" placeholder="두통, 어지러움, 붓기, 허리/무릎 통증, 병원 일정 등"></textarea>
+      <button class="btn btn-main" onclick="saveToday()">오늘 기록 저장하기</button>
+    </div>
+  </section>
+
+  <section class="panel" id="tab-meal">
+    <div class="section-title"><span>🍱</span><h2>식단 기록</h2></div>
+    <div id="mealCards"></div>
+    <button class="btn btn-main" onclick="saveMealsOnly()">식단 저장하기</button>
+    <div class="alert">사진은 자동으로 최대 가로 900px, JPEG 0.72 품질로 줄여서 저장돼. 용량은 대체로 확 줄어들어.</div>
+  </section>
+
+  <section class="panel" id="tab-graph">
+    <div class="section-title"><span>📊</span><h2>그래프 요약</h2></div>
+    <div class="range"><button class="active" id="range-week" onclick="setRange('week')">1주</button><button id="range-month" onclick="setRange('month')">1달</button><button id="range-year" onclick="setRange('year')">1년</button></div>
+    <div class="stat-grid">
+      <div class="stat"><div class="sico">⚖️</div><div class="val" id="summaryWeight">—</div><div class="lab">평균 몸무게</div></div>
+      <div class="stat"><div class="sico">🩺</div><div class="val" id="summaryBP">—</div><div class="lab">평균 혈압</div></div>
+      <div class="stat"><div class="sico">🔥</div><div class="val" id="summaryInflam">—</div><div class="lab">염증 평균</div></div>
+      <div class="stat"><div class="sico">🍩</div><div class="val" id="summaryBinge">—</div><div class="lab">폭식위험</div></div>
+    </div>
+    <div class="chart-box"><div class="chart-head"><strong>몸무게 변화</strong><span id="chartRange"></span></div><svg width="100%" viewBox="0 0 330 120" id="weightChart"></svg></div>
+    <div class="chart-box"><div class="chart-head"><strong>혈압 변화</strong><span>수축기/이완기</span></div><svg width="100%" viewBox="0 0 330 120" id="bpChart"></svg></div>
+    <div class="chart-box"><div class="chart-head"><strong>염증/폭식 위험</strong><span>높을수록 주의</span></div><svg width="100%" viewBox="0 0 330 120" id="riskChart"></svg></div>
+    <div id="summaryAdvice" class="alert">기록 2개 이상부터 그래프가 움직여.</div>
+  </section>
+
+  <section class="panel" id="tab-list">
+    <div class="section-title"><span>📚</span><h2>기록 목록</h2></div>
+    <div class="card tiny">날짜별 기록과 사진을 확인하고 수정/삭제할 수 있어.</div>
+    <div id="recordList"></div>
+    <div class="card">
+      <button class="btn btn-light" onclick="exportData()">백업 파일 저장</button>
+      <button class="btn btn-light" onclick="copyData()">기록 텍스트 복사</button>
+      <button class="btn btn-danger" onclick="clearAll()">전체 기록 삭제</button>
+      <p class="tiny" style="margin-top:12px">브라우저 localStorage에 저장돼. 브라우저 데이터 삭제하면 기록도 지워질 수 있으니 가끔 백업해줘.</p>
+    </div>
+  </section>
+</main>
+<nav class="nav">
+  <button class="active" onclick="switchTab('home',this)"><span class="ico">🏠</span>홈<span class="dot"></span></button>
+  <button onclick="switchTab('record',this)"><span class="ico">✍️</span>기록<span class="dot"></span></button>
+  <button onclick="switchTab('meal',this)"><span class="ico">🍱</span>식단<span class="dot"></span></button>
+  <button onclick="switchTab('graph',this)"><span class="ico">📊</span>그래프<span class="dot"></span></button>
+  <button onclick="switchTab('list',this)"><span class="ico">📚</span>목록<span class="dot"></span></button>
+</nav>
+</div>
+<script>
+const KEY="hyein_photo_health_diary_v1";
+const MEALS=[["breakfast","🌅","아침"],["lunch","☀️","점심"],["dinner","🌙","저녁"],["snack","🍪","간식/야식"]];
+const MOODS=[["😄","좋음"],["🙂","보통"],["😐","무난"],["😔","나쁨"],["😩","힘듦"]];
+const BINGE=[["없음",0],["약간",1],["강함",2],["터짐",3]];
+const INFLAM=[["0 없음",0],["1 약함",1],["2 보통",2],["3 심함",3],["4 매우 심함",4]];
+const SYMPTOMS=["두통","어지러움","붓기","허리통증","무릎통증","속불편","피로","생리/호르몬","염증느낌","수면부족"];
+let selectedMood="", selectedBinge="", selectedInflam="", selectedSymptoms=[], currentRange="week";
+let selectedBingeScore=null, selectedInflamScore=null;
+const $=id=>document.getElementById(id);
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function loadAll(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+function saveAll(d){localStorage.setItem(KEY,JSON.stringify(d))}
+function blank(date){return{date,weight:"",sys:"",dia:"",pulse:"",sleep:"",water:"",mood:"",binge:"",bingeScore:null,inflammation:"",inflammationScore:null,symptoms:[],mealMemo:"",healthMemo:"",meals:{breakfast:{text:"",photo:""},lunch:{text:"",photo:""},dinner:{text:"",photo:""},snack:{text:"",photo:""}}}}
+function getRec(date){return loadAll()[date]||blank(date)}
+function num(v){const n=parseFloat(v);return isNaN(n)?null:n}
+function avg(a){const f=a.filter(v=>v!==null&&!isNaN(v));return f.length?f.reduce((x,y)=>x+y,0)/f.length:null}
+function f1(v){return v===null?"—":String(Math.round(v*10)/10)}
+function dateKo(s){return new Date(s+"T00:00:00").toLocaleDateString("ko-KR",{month:"long",day:"numeric",weekday:"short"})}
+function switchTab(name,btn){document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));$("tab-"+name).classList.add("active");btn.classList.add("active");if(name==="home")refreshHome();if(name==="graph")renderGraphs();if(name==="list")renderList()}
+function buildChoices(){
+ $("moodRow").innerHTML=MOODS.map(m=>`<button class="mood-btn ${selectedMood===m[0]?'active':''}" onclick="selectedMood='${m[0]}';buildChoices()"><span>${m[0]}</span><span>${m[1]}</span></button>`).join("");
+ $("bingeRow").innerHTML=BINGE.map(b=>`<button class="pill ${selectedBinge===b[0]?'active':''}" onclick="selectedBinge='${b[0]}';selectedBingeScore=${b[1]};buildChoices()">${b[0]}</button>`).join("");
+ $("inflammationRow").innerHTML=INFLAM.map(i=>`<button class="pill ${selectedInflam===i[0]?'active':''}" onclick="selectedInflam='${i[0]}';selectedInflamScore=${i[1]};buildChoices()">${i[0]}</button>`).join("");
+ $("symptomRow").innerHTML=SYMPTOMS.map(s=>`<button class="pill ${selectedSymptoms.includes(s)?'active':''}" onclick="toggleSymptom('${s}')">${s}</button>`).join("");
+}
+function toggleSymptom(s){selectedSymptoms=selectedSymptoms.includes(s)?selectedSymptoms.filter(x=>x!==s):[...selectedSymptoms,s];buildChoices()}
+function buildMeals(){
+ $("mealCards").innerHTML=MEALS.map(m=>`
+ <div class="card">
+   <div class="label">${m[1]} ${m[2]}</div>
+   <textarea id="mealText_${m[0]}" placeholder="${m[2]}에 먹은 음식, 양, 느낌"></textarea>
+   <div class="meal-photo-row">
+     <div class="photo-box" id="photoBox_${m[0]}">사진<br>추가</div>
+     <div>
+       <div class="photo-btns">
+         <button class="photo-btn" onclick="$('file_${m[0]}').click()">앨범</button>
+         <button class="photo-btn" onclick="$('camera_${m[0]}').click()">촬영</button>
+       </div>
+       <input class="hidden-file" id="file_${m[0]}" type="file" accept="image/*" onchange="handlePhoto('${m[0]}',this.files[0])">
+       <input class="hidden-file" id="camera_${m[0]}" type="file" accept="image/*" capture="environment" onchange="handlePhoto('${m[0]}',this.files[0])">
+       <p class="tiny" id="size_${m[0]}" style="margin-top:6px"></p>
+     </div>
+   </div>
+ </div>`).join("");
+}
+async function compressImage(file,maxW=900,quality=.72){
+ return new Promise((resolve,reject)=>{
+  const img=new Image(); const reader=new FileReader();
+  reader.onload=e=>{img.onload=()=>{
+    let w=img.width,h=img.height;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
+    const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");ctx.drawImage(img,0,0,w,h);
+    const data=c.toDataURL("image/jpeg",quality);resolve({data,orig:file.size,newSize:Math.round(data.length*0.75),w,h});
+  }; img.src=e.target.result}; reader.onerror=reject; reader.readAsDataURL(file);
+ });
+}
+async function handlePhoto(key,file){
+ if(!file)return;
+ const res=await compressImage(file);
+ const date=$("dateInput").value||todayKey(); const data=loadAll(); const r=data[date]||collect();
+ if(!r.meals)r.meals={}; if(!r.meals[key])r.meals[key]={text:"",photo:""};
+ r.meals[key].photo=res.data; r.meals[key].photoInfo={orig:res.orig,newSize:res.newSize,w:res.w,h:res.h};
+ data[date]=r; saveAll(data);
+ renderMealPhoto(key,r.meals[key]); refreshHome();
+ $("size_"+key).textContent=`원본 ${(res.orig/1024/1024).toFixed(1)}MB → 저장 ${(res.newSize/1024).toFixed(0)}KB`;
+}
+function renderMealPhoto(key,meal){
+ const box=$("photoBox_"+key); if(!box)return;
+ if(meal&&meal.photo){box.innerHTML=`<img src="${meal.photo}"><button class="photo-del" onclick="deletePhoto('${key}')">×</button>`}
+ else box.innerHTML="사진<br>추가";
+}
+function deletePhoto(key){
+ const date=$("dateInput").value||todayKey(); const data=loadAll(); const r=data[date]||blank(date);
+ if(r.meals&&r.meals[key]){r.meals[key].photo="";r.meals[key].photoInfo=null;data[date]=r;saveAll(data)}
+ renderMealPhoto(key,r.meals?.[key]); refreshHome();
+}
+function loadToForm(date){
+ const r=getRec(date); $("dateInput").value=date;["weight","sys","dia","pulse","sleep","water"].forEach(k=>$(k+"Input").value=r[k]||"");
+ $("mealMemo").value=r.mealMemo||""; $("healthMemo").value=r.healthMemo||"";
+ selectedMood=r.mood||"";selectedBinge=r.binge||"";selectedBingeScore=r.bingeScore;selectedInflam=r.inflammation||"";selectedInflamScore=r.inflammationScore;selectedSymptoms=r.symptoms||[];buildChoices();
+ MEALS.forEach(m=>{const meal=r.meals?.[m[0]]||{};const t=$("mealText_"+m[0]);if(t)t.value=meal.text||"";renderMealPhoto(m[0],meal);const s=$("size_"+m[0]);if(s)s.textContent=meal.photoInfo?`저장 ${(meal.photoInfo.newSize/1024).toFixed(0)}KB`:"";});
+}
+function collect(){
+ const date=$("dateInput").value||todayKey();
+ const meals={};MEALS.forEach(m=>{const old=getRec(date).meals?.[m[0]]||{};meals[m[0]]={text:$("mealText_"+m[0])?.value.trim()||old.text||"",photo:old.photo||"",photoInfo:old.photoInfo||null}});
+ return {date,weight:$("weightInput").value,sys:$("sysInput").value,dia:$("diaInput").value,pulse:$("pulseInput").value,sleep:$("sleepInput").value,water:$("waterInput").value,mood:selectedMood,binge:selectedBinge,bingeScore:selectedBingeScore,inflammation:selectedInflam,inflammationScore:selectedInflamScore,symptoms:selectedSymptoms,mealMemo:$("mealMemo").value.trim(),healthMemo:$("healthMemo").value.trim(),meals,updatedAt:new Date().toISOString()}
+}
+function saveToday(){const r=collect();const d=loadAll();d[r.date]=r;saveAll(d);refreshHome();renderList();alert("저장 완료! 혜인이 기록 성공 😎")}
+function saveMealsOnly(){saveToday()}
+function completion(r){return [r.weight,(r.sys&&r.dia),r.sleep,r.water,r.binge,r.inflammation,(r.mealMemo||r.healthMemo),Object.values(r.meals||{}).some(m=>m.text||m.photo)].filter(Boolean).length}
+function refreshHome(){
+ const r=getRec(todayKey()), c=completion(r);$("ringNum").textContent=c;$("ringArc").setAttribute("stroke-dasharray",`${c/8*339} 339`);
+ $("homeWeight").textContent=r.weight?`${r.weight} kg`:"—";$("homeBP").textContent=r.sys&&r.dia?`${r.sys}/${r.dia}`:"—";$("homeInflam").textContent=r.inflammation||"—";$("homeBinge").textContent=r.binge||"—";
+ const photos=[];Object.values(r.meals||{}).forEach(m=>{if(m.photo)photos.push(m.photo)});$("homePhotos").innerHTML=photos.map(p=>`<img class="thumb" src="${p}">`).join("");$("homePhotosEmpty").style.display=photos.length?"none":"block";
+ const com=$("homeComment"); if(r.bingeScore>=2){com.className="alert";com.textContent="오늘 폭식충동 높음. 굶어서 복수하지 말고 단백질+물 먼저 가자."}else if(r.inflammationScore>=3){com.className="alert";com.textContent="오늘 몸 컨디션 주의. 무리 말고 수면/저염/수분 챙기기."}else{com.className="alert ok";com.textContent="기록은 완벽보다 꾸준함이 장땡. 오늘 하나만 저장해도 이김 😎"}
+}
+function renderList(){
+ const data=Object.values(loadAll()).sort((a,b)=>b.date.localeCompare(a.date)); if(!data.length){$("recordList").innerHTML='<div class="card tiny">아직 기록 없음</div>';return}
+ $("recordList").innerHTML=data.map(r=>{
+  const photos=[];Object.values(r.meals||{}).forEach(m=>{if(m.photo)photos.push(m.photo)});
+  return `<div class="record-row"><div class="day">${dateKo(r.date)}</div><div><div class="meta">${r.weight?`⚖️ ${r.weight}kg `:""}${r.sys&&r.dia?`🩺 ${r.sys}/${r.dia} `:""}${r.binge?`🍩 ${r.binge} `:""}${r.inflammation?`🔥 ${r.inflammation}`:""}</div><div class="photo-preview-list">${photos.map(p=>`<img class="thumb" src="${p}">`).join("")}</div><div>${(r.symptoms||[]).slice(0,5).map(s=>`<span class="chip">${s}</span>`).join("")}</div><div class="actions"><button class="smallbtn" onclick="viewRecord('${r.date}')">보기</button><button class="smallbtn" onclick="editRecord('${r.date}')">수정</button><button class="smallbtn del" onclick="deleteRecord('${r.date}')">삭제</button></div></div></div>`;
+ }).join("");
+}
+function viewRecord(date){
+ const r=getRec(date); const meals=r.meals||{}; alert([`📅 ${dateKo(date)}`,`⚖️ ${r.weight||"-"}kg / 🩺 ${r.sys||"-"}/${r.dia||"-"}`,`🍩 ${r.binge||"-"} / 🔥 ${r.inflammation||"-"}`,`증상: ${(r.symptoms||[]).join(", ")||"-"}`,`식단메모: ${r.mealMemo||"-"}`,`건강메모: ${r.healthMemo||"-"}`,`아침: ${meals.breakfast?.text||"-"}`,`점심: ${meals.lunch?.text||"-"}`,`저녁: ${meals.dinner?.text||"-"}`,`간식: ${meals.snack?.text||"-"}`].join("\\n\\n"));
+}
+function editRecord(date){loadToForm(date);switchTab("record",document.querySelectorAll(".nav button")[1]);setTimeout(()=>document.querySelector(".content").scrollTo({top:0,behavior:"smooth"}),50)}
+function deleteRecord(date){if(!confirm(`${date} 기록 삭제할까?`))return;const d=loadAll();delete d[date];saveAll(d);renderList();refreshHome();renderGraphs()}
+function rangeDays(){return currentRange==="week"?7:currentRange==="month"?31:365}
+function getRangeRecords(){const data=Object.values(loadAll()).sort((a,b)=>a.date.localeCompare(b.date));const now=new Date(todayKey()+"T00:00:00");const st=new Date(now);st.setDate(st.getDate()-(rangeDays()-1));return data.filter(r=>{const d=new Date(r.date+"T00:00:00");return d>=st&&d<=now})}
+function setRange(r){currentRange=r;["week","month","year"].forEach(x=>$("range-"+x).classList.toggle("active",x===r));renderGraphs()}
+function lineChart(id,recs,getter,color,label){const svg=$(id);const ptsRaw=recs.map(r=>({r,v:getter(r)})).filter(p=>p.v!==null&&!isNaN(p.v));if(ptsRaw.length<2){svg.innerHTML='<text x="165" y="62" text-anchor="middle" fill="#a88b80" font-size="12">기록 2개 이상 필요</text>';return}const W=330,H=120,p=22,vals=ptsRaw.map(x=>x.v);let mn=Math.min(...vals),mx=Math.max(...vals);if(mn===mx){mn-=1;mx+=1}else{mn-=(mx-mn)*.15;mx+=(mx-mn)*.15}const denom=Math.max(recs.length-1,1);const pts=ptsRaw.map(o=>{const i=recs.indexOf(o.r);return{x:p+i/denom*(W-p*2),y:H-p-(o.v-mn)/(mx-mn)*(H-p*2),v:o.v}});const d=pts.map((q,i)=>`${i?"L":"M"} ${q.x} ${q.y}`).join(" ");svg.innerHTML=`${[0,.5,1].map(t=>`<line x1="${p}" y1="${p+t*(H-p*2)}" x2="${W-p}" y2="${p+t*(H-p*2)}" stroke="#f0e4dc"/>`).join("")}<path d="${d}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>${pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="4" fill="#fff" stroke="${color}" stroke-width="2"/>${i===pts.length-1?`<text x="${q.x}" y="${Math.max(12,q.y-9)}" text-anchor="middle" fill="${color}" font-size="11" font-weight="700">${label?q.v.toFixed(1):q.v}</text>`:""}`).join("")}`}
+function bpChart(id,recs){const svg=$(id);const rows=recs.map(r=>({r,sys:num(r.sys),dia:num(r.dia)})).filter(x=>x.sys!==null||x.dia!==null);if(rows.length<2){svg.innerHTML='<text x="165" y="62" text-anchor="middle" fill="#a88b80" font-size="12">혈압 기록 2개 이상 필요</text>';return}const W=330,H=120,p=22,vals=rows.flatMap(x=>[x.sys,x.dia]).filter(x=>x!==null);let mn=Math.min(...vals)-8,mx=Math.max(...vals)+8,den=Math.max(recs.length-1,1);function pts(k){return rows.filter(x=>x[k]!==null).map(x=>{const i=recs.indexOf(x.r);return{x:p+i/den*(W-p*2),y:H-p-(x[k]-mn)/(mx-mn)*(H-p*2),v:x[k]}})}function path(a){return a.map((q,i)=>`${i?"L":"M"} ${q.x} ${q.y}`).join(" ")}const s=pts("sys"),d=pts("dia");svg.innerHTML=`<path d="${path(s)}" fill="none" stroke="#dc6868" stroke-width="2.5"/><path d="${path(d)}" fill="none" stroke="#73a1d8" stroke-width="2.5"/>${s.map(q=>`<circle cx="${q.x}" cy="${q.y}" r="4" fill="#fff" stroke="#dc6868" stroke-width="2"/>`).join("")}${d.map(q=>`<circle cx="${q.x}" cy="${q.y}" r="4" fill="#fff" stroke="#73a1d8" stroke-width="2"/>`).join("")}<text x="22" y="15" fill="#dc6868" font-size="10" font-weight="700">수축기</text><text x="72" y="15" fill="#73a1d8" font-size="10" font-weight="700">이완기</text>`}
+function renderGraphs(){const recs=getRangeRecords();$("chartRange").textContent=currentRange==="week"?"최근 1주":currentRange==="month"?"최근 1달":"최근 1년";$("summaryWeight").textContent=avg(recs.map(r=>num(r.weight)))===null?"—":f1(avg(recs.map(r=>num(r.weight))))+" kg";const as=avg(recs.map(r=>num(r.sys))),ad=avg(recs.map(r=>num(r.dia)));$("summaryBP").textContent=as&&ad?`${Math.round(as)}/${Math.round(ad)}`:"—";$("summaryInflam").textContent=avg(recs.map(r=>num(r.inflammationScore)))===null?"—":f1(avg(recs.map(r=>num(r.inflammationScore))))+"/4";$("summaryBinge").textContent=recs.filter(r=>(r.bingeScore??-1)>=2).length+" 회";lineChart("weightChart",recs,r=>num(r.weight),"#ff8b80",true);bpChart("bpChart",recs);lineChart("riskChart",recs,r=>{const b=r.bingeScore,i=r.inflammationScore;if(b==null&&i==null)return null;return ((b||0)+(i||0))/2},"#dc6868",true)}
+function exportData(){const blob=new Blob([JSON.stringify(loadAll(),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hyein_health_diary_backup.json";a.click()}
+async function copyData(){try{await navigator.clipboard.writeText(JSON.stringify(loadAll(),null,2));alert("복사 완료")}catch(e){alert("복사가 막혔어. 백업 파일 저장 써줘.")}}
+function clearAll(){if(confirm("진짜 전체 삭제?")){localStorage.removeItem(KEY);loadToForm(todayKey());refreshHome();renderList();renderGraphs()}}
+function init(){$("headerDate").textContent=new Date().toLocaleDateString("ko-KR",{month:"short",day:"numeric"});buildMeals();$("dateInput").value=todayKey();buildChoices();loadToForm(todayKey());refreshHome();renderList();renderGraphs()}
+document.addEventListener("DOMContentLoaded",init);
+document.addEventListener("change",e=>{if(e.target.id==="dateInput")loadToForm(e.target.value)});
+</script>
+</body>
+</html>
